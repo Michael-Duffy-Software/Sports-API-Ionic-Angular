@@ -1,0 +1,53 @@
+<!-- HEADER -->
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+	
+			<div style='float:left;'><h1>G00283381</h1></div>
+			<div style='float:right;'(click)="openSettingsPage()"><h1>Settings</h1></div>
+			
+	 </ion-title>
+  </ion-navbar>
+</ion-header>
+
+	
+<ion-content padding>
+	<ion-list>
+			
+		<!-- QUOTE DISPLAY -->	
+		<h4>Quote from {{personQuotedDisplay}} {{quoteTopicDisplay}}</h4>
+		<ion-item><ion-label><h4><i>{{quoteListed}}</i></h4></ion-label></ion-item>
+		
+		<!-- SPORTS DATA SETTINGS DISPLAY -->		
+		<h4>Sports Data Settings: </h4>
+		<ion-item><ion-label><h4><i>{{countryIdDisplay}} {{minimumAgeDisplay}} {{maximumAgeDisplay}}</i></h4></ion-label></ion-item>
+		<h4> {{ countryNameDisplay }} {{ noPlayerDataToDisplay }}</h4>
+		<ion-img [src]="countryFlagUrlLink" style="width:70px;height:70px;background-color: white;"></ion-img>
+
+		<!-- PLAYER TABLE -->
+		<div id="table">
+			<ion-item>
+				<table style="width:40%;">
+				
+						<tr>
+							<th style = "padding-top: 12px; padding-bottom: 12px; text-align: center; background-color: #bbbec7; color: black;">First Name</th>
+							<th style = "padding-top: 12px; padding-bottom: 12px; text-align: center; background-color: #bbbec7; color: black;">Last Name</th>
+							<th style = "padding-top: 12px; padding-bottom: 12px; text-align: center; background-color: #bbbec7; color: black;">Age</th>
+							<th style = "padding-top: 12px; padding-bottom: 12px; text-align: center; background-color: #bbbec7; color: black;">Height</th>
+						</tr>
+						  
+						<tr *ngFor="let player of playersArray" style ="background-color: #e6e8ed;">
+							<td style = "border: 1px solid #ddd; text-align: center; padding: 8px;">{{player.firstname}}</td>
+							<td style = "border: 1px solid #ddd; text-align: center; padding: 8px;">{{player.lastname}}</td>
+							<td style = "border: 1px solid #ddd; text-align: center; padding: 8px;">{{player.age}}</td>
+							<td style = "border: 1px solid #ddd; text-align: center; padding: 8px;">{{player.height}}</td>
+						</tr>
+						
+				</table>
+			</ion-item>	
+		</div>
+	</ion-list>
+</ion-content>
+
+
+

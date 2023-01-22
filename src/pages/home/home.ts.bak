@@ -1,0 +1,192 @@
+import { NavController } from 'ionic-angular';
+import { SettingsPage } from '../settings/settings';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Storage } from '@ionic/storage';
+
+@Component({
+  selector: 'page-home',
+  templateUrl: 'home.html'
+})
+export class HomePage implements OnInit {
+	
+	personQuoted : string;
+	personQuotedDisplay : string;
+	quoteTopicResult : string;
+	quoteTopicDisplay : string;
+	quoteListed : string;
+	countryId : number = null;
+	countryIdDisplay : string;
+	minimumAge : number = null;
+	minimumAgeDisplay : string;
+	maximumAge : number = null;
+	maximumAgeDisplay : string;
+	checkQuoteString : string = "famous-quotes";
+	apiKey : string = "77531aa0-78c0-11ed-adfe-cf1867ee5434";
+	countryNameDisplay : string;
+	countryNameResult : string = null;
+	countryFlagUrlLink : string = "";
+	noPlayerDataToDisplay : string = "";
+	playersArray : string[];
+
+	constructor(public navCtrl: NavController,private http:HttpClient, private storage : Storage) {}
+	  
+	ngOnInit() {}
+	   
+	ionViewWillEnter() {
+		this.loadQuote();
+		this.loadSportsData();	  
+	  }
+	  
+	openSettingsPage() {
+		this.navCtrl.push(SettingsPage);
+	  }
+	  
+	loadQuote(){
+	  
+			this.callQuoteAPI().subscribe(quoteResult => {
+				this.personQuoted = quoteResult.author;
+				this.quoteTopicResult = quoteResult.tags[0];
+				this.quoteListed = quoteResult.content;
+				this.checkQuoteString = this.quoteTopicResult;
+				if (this.checkQuoteString == "famous-quotes"){
+					this.quoteTopicDisplay = "";
+					this.personQuotedDisplay = this.personQuoted + ".";
+				}
+				else {
+					this.personQuotedDisplay = this.personQuoted;
+					this.quoteTopicDisplay = "about " + this.quoteTopicResult + ".";
+				}
+			});
+	  
+	  }
+	  
+	callQuoteAPI(): Observable<any> {
+		return this.http.get("https://api.quotable.io/random")
+	  }
+	  
+	loadSportsData() {
+	  
+		  this.storage.get("country").then((val) => {
+			this.countryId = val
+			if (this.countryId == null) {
+				this.countryIdDisplay = "No Settings Selected";
+				this.hideTable();	
+			} 
+			else {
+				this.countryIdDisplay = "Country ID : " + this.countryId;
+				this.storage.get("minimumAge").then((val) => {
+					this.minimumAge = val
+					if (this.minimumAge == null) {
+						this.minimumAgeDisplay = null;
+						this.storage.get("maximumAge").then((val) => {
+							this.maximumAge = val
+							if (this.maximumAge == null) {
+								this.maximumAgeDisplay = null;
+								this.sportsAPI();	
+							} 
+							else {
+								this.maximumAgeDisplay = "  /  Maximum Age : " + this.maximumAge;
+								this.sportsAPI();
+							}
+						});
+						
+					} 
+					else {
+						this.minimumAgeDisplay = "  /  Minimum Age : " + this.minimumAge;
+						this.storage.get("maximumAge").then((val) => {
+							this.maximumAge = val
+							if (this.maximumAge == null) {
+								this.maximumAgeDisplay = null;
+								this.sportsAPI();			
+							} 
+							else {
+								this.maximumAgeDisplay = "  /  Maximum Age : " + this.maximumAge;
+								this.sportsAPI();	
+							}		
+						});
+					}
+				});
+			
+			}
+			});
+	}
+	  
+	sportsAPI() {
+		this.loadCountryNameAndFlag();
+		this.loadPlayerData();
+	}
+
+	loadCountryNameAndFlag(){
+			this.callCountryNameAPI().subscribe(countryResult => {
+				this.countryNameResult = countryResult.data.name;
+				this.countryNameDisplay = this.countryNameResult;
+				this.setFlagUrl(countryResult.data.country_code);
+			});
+	}
+
+	callCountryNameAPI(): Observable<any> {
+		return this.http.get("https://app.sportdataapi.com/api/v1/soccer/countries/" + this.countryId + "?apikey=" +  this.apiKey);
+	}
+	  
+	setFlagUrl(countryCodeLowerCase : string) {
+		this.countryFlagUrlLink = "https://flagsapi.com/" + countryCodeLowerCase.toUpperCase() + "/shiny/64.png";
+	}
+	 
+	loadPlayerData(){
+			this.callPlayerDataAPI().subscribe(playerDataResult => {
+			
+			if (playerDataResult.data.length == 0){
+				this.noPlayerDataToDisplay = " : No Player Data Available";
+				this.hideTable();
+			};
+			
+			if (playerDataResult.data.length > 0) {
+				this.noPlayerDataToDisplay = "";
+				this.displayPlayerDataResult(playerDataResult.data);
+			}
+
+			});
+
+	}
+	 
+	callPlayerDataAPI(): Observable<any> {
+		let playerDataAPIString : string = this.setPlayerDataAPIString();
+		return this.http.get(playerDataAPIString);	
+	}
+	 
+	setPlayerDataAPIString() : string{
+		 if (this.minimumAge == null && this.maximumAge == null) {
+			return "https://app.sportdataapi.com/api/v1/soccer/players?apikey=" + this.apiKey + "&country_id=" + this.countryId;
+		 }
+		 
+		 if (this.minimumAge == null && this.maximumAge != null) {
+			return "https://app.sportdataapi.com/api/v1/soccer/players?apikey=" + this.apiKey + "&country_id=" + this.countryId + "&max_age=" + this.maximumAge;
+		 }
+		 
+		 if (this.minimumAge != null && this.maximumAge == null) {
+			return "https://app.sportdataapi.com/api/v1/soccer/players?apikey=" + this.apiKey + "&country_id=" + this.countryId + "&min_age=" + this.minimumAge;
+		 }
+		 
+		 if (this.minimumAge != null && this.maximumAge != null) {
+			return "https://app.sportdataapi.com/api/v1/soccer/players?apikey=" + this.apiKey + "&country_id=" + this.countryId + "&min_age=" + this.minimumAge + "&max_age=" + this.maximumAge;
+		 }
+	 }
+	 
+	displayPlayerDataResult(players:string[]) {
+		this.playersArray = players;
+		this.showTable();
+	 }
+	 
+	hideTable() {
+		let table = document.getElementById("table");
+		table.style.display = "none";
+	}
+
+	showTable() {
+		let table = document.getElementById("table");
+		table.style.display = "block";
+	}
+   
+}

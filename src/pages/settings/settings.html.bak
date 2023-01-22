@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title><h1>Change Settings</h1></ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+<ion-list> 
+
+  <ion-item>
+    <ion-label>Country ID : </ion-label>
+	
+	<ion-input type="number" [(ngModel)]="countryIdEntered"></ion-input>
+	
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>Minimum : </ion-label>
+    <ion-input type="number" [(ngModel)]="minimumAgeEntered"></ion-input>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label>Maximum : </ion-label>
+    <ion-input type="number" [(ngModel)]="maximumAgeEntered"></ion-input>
+  </ion-item>
+
+</ion-list>
+
+<button ion-button (click)="saveButton()">Save</button>
+<button ion-button color="danger" (click)="resetSettings()">Reset</button>
+
+</ion-content>
