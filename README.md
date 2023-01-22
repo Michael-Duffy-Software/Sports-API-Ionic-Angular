@@ -15,10 +15,10 @@
 - Typescript
 - Ionic Angular
 
-### ** Homepage**
+### **Homepage**
 ![Table](/assets/homepage.PNG)
 
-### ** Settings Page**
+### **Settings Page**
 ![Table](/assets/settings.PNG)
 
 ### **Memory Usage**
