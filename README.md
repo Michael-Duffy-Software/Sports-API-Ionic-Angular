@@ -1,4 +1,4 @@
-## Sports Data Ionic Angular
+## Sports Data Ionic Application
 
 
 ### **About The Project**
