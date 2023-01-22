@@ -1,4 +1,4 @@
-## Sports API Ionic Angular
+## Sports Data Ionic Angular
 
 
 ### **About The Project**
