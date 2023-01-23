@@ -17,5 +17,5 @@ This project involved building a webpage which displays sports data about a chos
 ### **Settings Page**
 ![Table](/assets/settings.PNG)
 
-### **Memory Usage**
+### **Ionic Storage**
 ![Table](/assets/memory.PNG)
